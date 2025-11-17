@@ -19,6 +19,12 @@ export interface CourseParticipant {
   email: string;
   enrollmentOrder: number;
   isActive: boolean;
+  isPermanentAbsent?: boolean; // Always absent for entire course
+  aliases?: Array<{
+    name: string;
+    originalEnrollmentOrder?: number;
+  }>;
+  mergedFromIds?: string[]; // IDs of participants merged into this one
 }
 
 /**
@@ -198,6 +204,12 @@ export const CourseParticipantSchema = z.object({
   email: z.string().email('Email non valida'),
   enrollmentOrder: z.number().min(1),
   isActive: z.boolean(),
+  isPermanentAbsent: z.boolean().optional(),
+  aliases: z.array(z.object({
+    name: z.string(),
+    originalEnrollmentOrder: z.number().optional(),
+  })).optional(),
+  mergedFromIds: z.array(z.string()).optional(),
 });
 
 export const SessionInfoSchema = z.object({

@@ -107,11 +107,24 @@ const prepareTemplateData = (lessonData: LessonData): WordTemplateData => {
     templateData[`PomeOraOut${i}` as keyof WordTemplateData] = '';
     templateData[`presenza${i}` as keyof WordTemplateData] = '';
   }
-  
-  // Add participant data (up to 5 participants)
-  const participants = lessonData.participants.slice(0, 5);
-  
-  participants.forEach((participant, i) => {
+
+  // Create slots array to respect enrollment order
+  // If participants have enrollmentOrder, use it; otherwise use array index
+  const slots: Array<ProcessedParticipant | null> = new Array(5).fill(null);
+
+  lessonData.participants.forEach((participant, i) => {
+    // Use enrollmentOrder if available (1-based), otherwise use array index
+    const position = participant.enrollmentOrder ? participant.enrollmentOrder - 1 : i;
+
+    // Only place in slots 0-4 (positions 1-5 in document)
+    if (position >= 0 && position < 5) {
+      slots[position] = participant;
+    }
+  });
+
+  // Fill template data from slots
+  slots.forEach((participant, i) => {
+    if (!participant) return; // Skip empty slots
     const index = i + 1;
     
     templateData[`nome${index}` as keyof WordTemplateData] = participant.name || '';

@@ -65,6 +65,8 @@ export interface ProcessedParticipant {
     /** Formatted connection list for this alias */
     connectionsList: string;
   }>;
+  /** Enrollment order (for full-course mode) - determines position in document */
+  enrollmentOrder?: number;
 }
 
 /**
